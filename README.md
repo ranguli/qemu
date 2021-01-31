@@ -17,4 +17,11 @@
 #   3. Run up.sh in the newly-created directory for your VM to spin it up.
 
 
+Create a base image using the 
 
+`./base-image-builder.sh configs/debian-10.7.0-base.config`
+
+
+Connecting to a VM over SPICE
+
+`remote-viewer spice://192.168.x.y?port=5930`
