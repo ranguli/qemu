@@ -3,16 +3,6 @@
 # A small wrapper script for bare QEMU to spin up a VM. Kind of like a low-level,
 # less-automated Packer.
 
-# Usage:
-#   1. Configure and run script (see the CONFIG section below)
-#      There is no parsing of stdin. All user data is onboard.
-#   2. Connect over VNC (port 0.0.0.0:5900 by default) and go
-#      through the OS installation process (its manual, but only once).
-#   4. Do what you want: setup SSH, run Ansible, anything you want
-#      to have in your base system
-#   5. Use new-from-base-image.sh to create new VMs
-#      utilizing your newly created base image.
-
 if [ -z "$1" ]; then
     echo "Provide the name of a .config file as an argument"
     exit
@@ -32,20 +22,20 @@ while read -r line; do
   fi
 done < "$1"
 
-ISO=${config_value[0]}
-ISO_URL=${config_value[1]}
+ISO_URL=${config_value[0]}
+ISO=${config_value[1]}
 ISO_CHECKSUM=${config_value[2]}
 CHECKSUM_COMMAND=${config_value[3]}
 QEMU_IMG=${config_value[4]}
 DISK_SIZE=${config_value[5]}
 
-if [ -z ${ISO+x} ]; then
-    echo "You must set the \$ISO config flag."
+if [ -z ${ISO_URL+x} ]; then
+    echo "You must set the \$ISO_URL config flag."
     exit
 fi
 
-if [ -z ${ISO_URL+x} ]; then
-    echo "You must set the \$ISO_URL config flag."
+if [ -z ${ISO+x} ]; then
+    echo "You must set the \$ISO config flag."
     exit
 fi
 

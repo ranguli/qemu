@@ -3,11 +3,50 @@
 # A small wrapper script for bare QEMU to spin up a VM. Kind of like a low-level,
 # less-automated Packer.
 
-# Usage:
-#   1. Create a base image using build-image.sh if you haven't already done so.
-#      There is no parsing of stdin. All user data is onboard.
-#   2. Configure the script below to your use case.
-#   3. Run up.sh in the newly-created directory for your VM to spin it up.
+if [ -z "$1" ]; then
+    echo "Provide the name of a blueprint .config file to be built as an argument"
+    exit
+fi
+
+if [[ ! -f "$1" ]]; then
+    echo "${1} not a file."
+    exit
+fi
+
+i=0
+while read -r line; do
+  if [[ "$line" =~ ^[^#]*= ]]; then
+    config_value[i]=${line#*= }
+    ((i++))
+  fi
+done < "$1"
+
+ISO=${config_value[0]}
+ISO_URL=${config_value[1]}
+ISO_CHECKSUM=${config_value[2]}
+CHECKSUM_COMMAND=${config_value[3]}
+QEMU_IMG=${config_value[4]}
+DISK_SIZE=${config_value[5]}
+
+if [ -z ${ISO+x} ]; then
+    echo "You must set the \$ISO config flag."
+    exit
+fi
+
+if [ -z ${ISO_URL+x} ]; then
+    echo "You must set the \$ISO_URL config flag."
+    exit
+fi
+
+if [ -z ${ISO_CHECKSUM+x} ]; then
+    echo "You must set the \$ISO_CHECKSUM config flag."
+    exit
+fi
+
+if [ -z ${CHECKSUM_COMMAND+x} ]; then
+    echo "You must set the \$CHECKSUM_COMMAND config flag."
+    exit
+fi
 
 
 ########################################
@@ -18,10 +57,10 @@
 
 # Uncomment to set the name of the existing base image you would like to
 # build off of. (required)
-# QEMU_BASE_IMG="debian_base.img"
+QEMU_BASE_IMG="debian_base.img"
 
 # Uncomment to set the name for your new VM
-# QEMU_NAME="custom-debian"
+QEMU_NAME="custom-debian"
 
 # Uncomment to set a randomized SSH port for the new VM. You still need to
 # enable OpenSSH during the creation of the base image for this to be of
