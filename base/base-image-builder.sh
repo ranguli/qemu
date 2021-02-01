@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A small wrapper script for bare QEMU to spin up a VM. Kind of like a low-level, 
+# A small wrapper script for bare QEMU to spin up a VM. Kind of like a low-level,
 # virt-install but with a hell of a lot less dependencies.
 
 if [ -z "$1" ]; then
@@ -103,11 +103,16 @@ else
 
 fi
 
-echo "Connect to the system over VNC at 0.0.0.0:5900 and go through the installation procedure."
+SPICE_PORT=$(shuf -i 1025-65534 -n 1)
+echo "Connect to the system over SPICE at port $SPICE_PORT and go through the installation procedure."
 qemu-system-x86_64 \
 	-boot c \
 	-drive format=raw,media=cdrom,readonly,file="$ISO_DIR"/"$ISO" \
 	-drive format=raw,file="$IMG_DIR"/"$QEMU_IMG" \
 	-m "$MEMORY" \
-	-vnc 0.0.0.0:0 \
+	-vga qxl \
+	-device virtio-serial-pci \
+    -spice port="$SPICE_PORT",disable-ticketing \
+	-device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 \
+	-chardev spicevmc,id=spicechannel0,name=vdagent \
 	-enable-kvm
