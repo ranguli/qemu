@@ -25,7 +25,9 @@ done < "$1"
 ISO_URL=${config_value[0]}
 ISO=${config_value[1]}
 ISO_CHECKSUM=${config_value[2]}
+
 CHECKSUM_COMMAND=${config_value[3]}
+
 QEMU_IMG=${config_value[4]}
 DISK_SIZE=${config_value[5]}
 

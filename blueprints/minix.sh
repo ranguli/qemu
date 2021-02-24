@@ -62,13 +62,13 @@ echo "Starting VM $QEMU_NAME with ${MEMORY}MB of RAM and $CORES CPU cores. Conne
 
 qemu-system-x86_64 \
 	-boot d \
-	-drive format=raw,file=./"$QEMU_NAME"/"$QEMU_IMG" \
+	-hda ./"$QEMU_NAME"/"$QEMU_IMG" \
 	-m "$MEMORY" \
-	-smp "$CORES" \
-	-enable-kvm \
 	-nic user,hostfwd=tcp::${SSH_PORT}-:22 \
-	-device qxl-vga,vgamem_mb=64 \
+	-vga qxl \
 	-device virtio-serial-pci \
 	-spice port="$SPICE_PORT",disable-ticketing \
 	-device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 \
 	-chardev spicevmc,id=spicechannel0,name=vdagent
+
+
